@@ -11,7 +11,6 @@ function pruebas(req, res){
   });
 }
 
-
 //METODO SIGNUP
 function saveUser(req, res){
     var user = new User();
@@ -87,7 +86,6 @@ function loginUser(req, res){
         }
       }
      );
-
 }
 
 module.exports = {
