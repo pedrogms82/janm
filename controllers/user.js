@@ -1,5 +1,7 @@
 'use strict' //Controlador de usuario
 
+var fs = require('fs');
+var path = require('path');
 var User = require('../models/user');
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('../services/jwt');
@@ -133,13 +135,25 @@ function uploadImage(req, res) {
     }else{
         res.status(200).send({message: 'Extension de archivo no valida'});
     }
-
     console.log("fileName: " + fileName);
-
     console.log("filePath: " + filePath);
   }else{
     res.status(200).send({message: 'No ha subido la imagen'});
   }
+
+}
+
+function getImageFile(req, res) {
+  var imageFile = req.params.imageFile;
+  var pathImageFile = './uploads/users/'+ imageFile;
+
+  fs.exists(pathImageFile, function(exists){
+    if(exists){
+      res.sendFile(path.resolve(pathImageFile));
+    }else{
+      res.status(200).send({message: 'La imagen no existe'});
+    }
+  });
 
 }
 
@@ -148,5 +162,6 @@ module.exports = {
   saveUser,
   loginUser,
   updateUser,
-  uploadImage
+  uploadImage,
+  getImageFile
 };
