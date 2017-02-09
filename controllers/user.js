@@ -16,7 +16,7 @@ function saveUser(req, res){
     var user = new User();
 
     var params = req.body;
-    console.log(params);
+    console.log("params: " + params);
 
     user.name = params.name;
     user.surname = params.surname;
@@ -75,7 +75,7 @@ function loginUser(req, res){
                     token: jwt.createToken(user)
                   })
                 }else{
-                  res.status(200).send({user});
+                  res.status(200).send({user,   token: jwt.createToken(user)});
                 }
               }else{
                 //devolver error 404 password doesnt match
@@ -88,8 +88,65 @@ function loginUser(req, res){
      );
 }
 
+function updateUser(req, res) {
+  var userId = req.params.id;
+  var update = req.body;
+  //Actualizamos user por id
+  User.findByIdAndUpdate(userId, update, (err, userUpdated) =>{
+    if(err){
+      res.status(500).send({message: 'Error al actualizar el usuario'});
+    }else{
+      if(!userUpdated){
+      res.status(404).send({message: 'El usuario no se ha podido actualizar'});
+      }else{
+        res.status(200).send({'Usuario antiguo': userUpdated, 'Cambios': update});
+      }
+    }
+  });
+
+}
+
+function uploadImage(req, res) {
+  var userId = req.params.id;
+  var fileName = 'No hay fichero';
+
+  if(req.files){
+    var filePath = req.files.image.path;
+    var fileSplit = filePath.split('\\');
+    var fileName = fileSplit[2];
+
+    var extSplit = fileName.split('\.');
+    var fileExt = extSplit[1];
+
+    if(fileExt == 'png' || fileExt == 'jpg' || fileExt == 'gif'){
+          User.findByIdAndUpdate(userId, {image: fileName}, (err, userUpdated) =>{
+            if(err){
+              res.status(500).send({message: 'Error al actualizar  la imagen de usuario'});
+            }else{
+              if(!userUpdated){
+              res.status(404).send({message: 'La imagen de usuario no se ha podido actualizar'});
+              }else{
+                res.status(200).send({'Usuario antiguo': userUpdated, 'Nueva imagen': fileName});
+              }
+            }
+          });
+    }else{
+        res.status(200).send({message: 'Extension de archivo no valida'});
+    }
+
+    console.log("fileName: " + fileName);
+
+    console.log("filePath: " + filePath);
+  }else{
+    res.status(200).send({message: 'No ha subido la imagen'});
+  }
+
+}
+
 module.exports = {
   pruebas,
   saveUser,
-  loginUser
+  loginUser,
+  updateUser,
+  uploadImage
 };
