@@ -10,6 +10,7 @@ var app = express();
 
 var userRoutes = require('./routes/user');
 var artistRoutes = require('./routes/artist');
+var albumRoutes = require('./routes/album');
 var UserController = require('./controllers/user');
 
 app.use(bodyParser.urlencoded({extended:false}));
@@ -18,7 +19,7 @@ app.use(bodyParser.json());
 //Cabeceras http
 
 //rutas base
-app.use('/api', [userRoutes, artistRoutes]);
+app.use('/api', [userRoutes, artistRoutes, albumRoutes]);
 
 //Asi seria sin el Router
 // app.post('/signup', UserController.saveUser);
